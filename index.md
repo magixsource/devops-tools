@@ -9,6 +9,7 @@
 此外，我也会抽出业余时间，分享工作中比较有意思的实用经验。希望对您有帮助。
 
 ###目录
+
 [Devops script assistant](deveop-script-assistant.html) Devops script assistant用于解放您的双手，帮助快速拼装工作中使用的devops bash脚本。
 目前支持git拉代码、build构建系统构件、package打包构件并更新到远程主机、run启动远程服务。
 >前些天，手头上有50＋ALIYUN服务器，每个服务器上都部署了一个微服务中台，通过脚本，可以快速部署系统到dev、test、poc_test、stg、prod，一个人就搞定了。
