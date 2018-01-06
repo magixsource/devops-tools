@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+    <meta charset="UTF-8">
+    <title>Devops! script assistant v0.1.0</title>
+    	<script type="text/javascript" src="javascript/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/spectre.min.css">
+	</head>
+	<body>
+		
+		 <div id="forms" class="container">
+		 	<h1>Devops! script assistant</h1>
+			<div class="form-group">
+			 	<label class="form-checkbox">
+				    <input type="checkbox" name="cmd" value="git"/> 
+				    <i class="form-icon"></i> GIT
+				</label>
+				<label class="form-checkbox">
+					<input type="checkbox" name="cmd" value="build"/> 
+				    <i class="form-icon"></i> BUILD
+				</label>
+				<label class="form-checkbox">
+					<input type="checkbox" name="cmd" value="package"/> 
+			    		<i class="form-icon"></i> PACKAGE
+				</label>
+				<label class="form-checkbox">
+					<input type="checkbox" name="cmd" value="run"/> 
+			    		<i class="form-icon"></i> RUN
+				</label>
+				<p class="form-input-hint d-hide">cmd is require!</p>
+			</div>	
+
+			<div class="form-group">
+			  <input class="form-input" type="text" id="m" placeholder="M">
+			  <p class="form-input-hint d-hide">m is require!</p>
+			</div>
+
+			<div class="form-group">
+				<select id="e" class="form-select">
+					<optgroup label="dev">
+						<option value="dev">dev</option>	
+					</optgroup>
+					<optgroup label="test">
+						<option value="test">test</option>	
+					</optgroup>
+					<optgroup label="stg">
+						<option value="stg">stg</option>	
+					</optgroup>
+					<optgroup label="prod">
+						<option value="prod">prod</option>	
+					</optgroup>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<input class="form-input" type="text" id="f" value="~/devops/etc/devops.conf" placeholder="configuration file path">
+				<p class="form-input-hint d-hide">f is require!</p>
+			</div>
+
+			<div class="form-group">
+				<select id="v" class="form-select">
+					<option value="0.7.0">0.7.0</option>	
+					<option value="0.7.1">0.7.1</option>
+					<option value="0.7.2">0.7.2</option>
+					<option value="0.8.0">0.8.0</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<select id="b" class="form-select">
+					<optgroup label="dev">
+						<option value="dev">dev</option>	
+					</optgroup>
+					<optgroup label="poc">
+						<option value="dev_v0.7.2_poc">dev_v0.7.2_poc</option>	
+					</optgroup>
+					<optgroup label="master">
+						<option value="master">master</option>	
+					</optgroup>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<select id="t" class="form-select">
+					<option value=''</option> 
+					<optgroup label="dev">
+						<option value="dev">dev</option>	
+					</optgroup>
+					<optgroup label="poc">
+						<option value="dev_v0.7.2_poc">dev_v0.7.2_poc</option>	
+					</optgroup>
+					<optgroup label="master">
+						<option value="master">master</option>	
+					</optgroup>
+				</select>
+			</div>
+
+			<div class="form-group">
+			  <label class="form-radio">
+			    <input type="radio" name="push" value="1" checked>
+			    <i class="form-icon"></i> Push
+			  </label>
+			  <label class="form-radio">
+			    <input type="radio" name="push" value="0">
+			    <i class="form-icon"></i> No push
+			  </label>
+			</div>
+
+			<div class="form-group">
+			  <label class="form-radio">
+			    <input type="radio" name="exist" value="1">
+			    <i class="form-icon"></i> Exist
+			  </label>
+			  <label class="form-radio">
+			    <input type="radio" name="exist" value="0" checked>
+			    <i class="form-icon"></i> No exist
+			  </label>
+			</div>
+
+			<div class="form-group">
+			  <textarea class="form-input" id="console" placeholder="console script" rows="5"></textarea>
+			</div>
+
+			<div class="form-group">
+				<button class="btn btn-primary float-right" id="submit">Devops!</button>
+			</div>
+		 </div>
+		
+
+		
+		<!-- devops {target} [e] [f] [v] [m] [b] [t] [-exist]-->
+		
+		
+	</body>
+	<script type="text/javascript">
+		$(function(){
+			function generate(cmd,m,e,f,v,b,t,isPush,isExist){
+				var result = "devops "+cmd+" -m "+m+" -f "+f;
+				if(e && cmd!='git'){
+					result += " -e "+e;	
+				}
+				if(v && (cmd=='package' || cmd=='run')){
+					result += " -v "+v;	
+				}
+				if(b && cmd=='git'){
+					result += " -b "+b;	
+				}
+				if(t && cmd =='git'){
+					result += " -t "+t;	
+				}
+				if(isPush == '1' && cmd =='package'){
+					result += " --push";	
+				}
+				if(isExist == '1' && cmd =='run'){
+					result += " --exist";	
+				}
+				return result;
+
+			}
+
+			function error($obj){
+				$.each($obj,function(){
+					$(this).addClass('is-error');
+					if($(this).next('p') && $(this).next('p').hasClass('d-hide')){
+						$(this).next('p').removeClass('d-hide');
+					}
+				});
+				
+			}
+			function clear($obj){
+				$.each($obj,function(){
+					$(this).removeClass('is-error');
+					if($(this).next('p') && !$(this).next('p').hasClass('d-hide')){
+						$(this).next('p').addClass('d-hide');
+					}
+				});
+				
+			}
+			$("#m,#f").blur(function(){
+				if($(this).val()){
+					clear($(this));
+				}else{
+					error($(this));
+				}
+			});
+
+			$("input[name='cmd']").change(function(){
+				if($("input[name='cmd']:checked").length==0){
+					error($("input[name='cmd']").parent("label"));
+				}else{
+					clear($("input[name='cmd']").parent("label"));
+				}
+			});
+
+			$("#submit").click(function(){
+				var m = $("#m").val();
+				if(!m){
+					error($('#m'));
+					return;	
+				}
+				var e = $("#e").val();
+				var f = $("#f").val();
+				if(!f){
+					error($('#f'));
+					return;
+				}
+				var v = $("#v").val();
+				var b = $("#b").val();
+				var t = $("#t").val();
+				var isExist = $("input[name='exist']").val();
+				var isPush = $("input[name='push']").val();
+
+				var text = "";
+
+				var commandLength = $("input[name='cmd']:checked").length;
+				if(commandLength==0){
+					error($("input[name='cmd']").parent("label"));
+					return;
+				}
+				$.each($("input[name='cmd']:checked"),function(){
+					var cmd = $(this).val();
+					if(text.length > 1){
+						text += " && " + generate(cmd,m,e,f,v,b,t,isPush,isExist);
+					}else{
+						text = generate(cmd,m,e,f,v,b,t,isPush,isExist);
+					}
+				});
+
+				$("#console").text(text);
+
+			});
+		});
+	</script>
+</html>
